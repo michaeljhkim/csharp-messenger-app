@@ -15,9 +15,9 @@ Messenger outStream = new Messenger();
 List<string> outgoingMessages = new List<string>();
 
 // Task to continuously read input from the console and add it to the outgoingMessages list
-await new TaskFactory().StartNew(async () => {
+var input_messages = new TaskFactory().StartNew(async () => {
     while (true) {
-        string? msg = Console.ReadLine();
+        string msg = Console.ReadLine() ?? string.Empty;
         outgoingMessages.Add(msg);
     }
 });
@@ -29,13 +29,10 @@ while (true) {
 }
 
 // Function to read incoming packets from the server
-void ReadPackets()
-{
-    var stream = client.GetStream();
-    for (int i = 0; i < 10; i++)
-    {
-        if (stream.DataAvailable)
-        {
+void ReadPackets() {
+    NetworkStream stream = client.GetStream();
+    for (int i = 0; i < 10; i++) {
+        if (stream.DataAvailable) {
             byte[] buffer = new byte[client.ReceiveBufferSize];
             int bytesRead = stream.Read(buffer, 0, buffer.Length);
             (int opcode, string message) = inStream.ParseMessagePacket(buffer.Take(bytesRead).ToArray());
@@ -45,10 +42,8 @@ void ReadPackets()
 }
 
 // Function to send packets to the server
-void SendPackets()
-{
-    if (outgoingMessages.Count > 0)
-    {
+void SendPackets() {
+    if (outgoingMessages.Count > 0) {
         var msg = outgoingMessages[0];
         var packet = outStream.CreateMessagePacket(10, msg);
         client.GetStream().Write(packet);
