@@ -1,2 +1,2 @@
-# simple-csharp-message-app
-Simple csharp direct messaging app
+#csharp-messager-app
+csharp direct messaging app
